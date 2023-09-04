@@ -7,5 +7,6 @@ import java.math.BigInteger;
 
 public interface IExpenseDAOService {
 
-	ExpenseDTO addExpense(UserDAO userDAo, ExpenseBodyDTO expenseBodyDto);
+	ExpenseDTO addExpense(UserDAO userDao, ExpenseBodyDTO expenseBodyDto);
+	boolean deleteExpense(UserDAO userDao, BigInteger expenseId);
 }

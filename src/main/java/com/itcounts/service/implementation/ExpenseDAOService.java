@@ -9,6 +9,7 @@ import com.itcounts.repository.IExpenseCategoryDAORepository;
 import com.itcounts.repository.IExpenseDAORepository;
 import com.itcounts.requestbody.ExpenseBodyDTO;
 import com.itcounts.service.interfaces.IExpenseDAOService;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -57,14 +58,33 @@ public class ExpenseDAOService implements IExpenseDAOService {
 		if (!isUserLinkedWithAccount) {
 			return null;
 		}
+
 		ExpenseDAO expenseDao = ExpenseDAO.builder()
 				.author(userDao)
 				.amount(expenseBodyDto.getAmount())
 				.expenseCategoryDao(expensesCategoryDaoRepository.getExpenseCategoryById(expenseBodyDto.getExpenseCategoryId()))
-				.spendDate(Date.valueOf(LocalDate.now()))
 				.insertedDate(Timestamp.from(Instant.now()))
 				.build();
+		if (expenseBodyDto.getSpendDate() == null) {
+			expenseDao.setSpendDate(Date.valueOf(LocalDate.now()));
+		} else {
+			expenseDao.setSpendDate(expenseBodyDto.getSpendDate());
+		}
 		expenseDao = expenseDaoRepository.save(expenseDao);
 		return modelMapper.map(expenseDao, ExpenseDTO.class);
 	}
+
+	@Override
+	public boolean deleteExpense(UserDAO userDao, BigInteger expenseId) {
+		Optional<ExpenseDAO> expenseDaoOptional = expenseDaoRepository.getExpenseById(expenseId);
+		if (expenseDaoOptional.isEmpty()) {
+			return false;
+		}
+		ExpenseDAO expenseDao = expenseDaoOptional.get();
+		expenseDao.setDeleted(true);
+		expenseDaoRepository.save(expenseDao);
+		return true;
+	}
+
+
 }

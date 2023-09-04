@@ -35,7 +35,7 @@ public class ExpenseDAO {
 	private BigInteger id;
 
 	@Column(name = "amount")
-	private BigDecimal amount;
+	private double amount;
 
 	@Column(name = "inserted_date")
 	private Timestamp insertedDate;
@@ -54,5 +54,8 @@ public class ExpenseDAO {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private ExpenseCategoryDAO expenseCategoryDao;
+
+	@Column(name = "is_deleted")
+	private boolean isDeleted;
 
 }

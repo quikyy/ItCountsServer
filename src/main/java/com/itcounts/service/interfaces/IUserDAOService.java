@@ -6,7 +6,6 @@ import com.itcounts.model.dto.user.UserDTO;
 
 public interface IUserDAOService {
 
-	UserDTO getUserDto(UserDAO userDAO);
 
 }
 

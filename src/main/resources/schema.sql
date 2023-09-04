@@ -21,25 +21,16 @@ INSERT INTO expense_categories (name) VALUES ('House');
 INSERT INTO expense_categories (name) VALUES ('Credit');
 INSERT INTO expense_categories (name) VALUES ('Health');
 
--- user details
-CREATE TABLE user_details (
-  id BIGINT NOT NULL AUTO_INCREMENT,
-  first_name VARCHAR(255) NULL,
-  last_name VARCHAR(255) NULL,
-  date_of_birth DATE NULL,
-  gender_id BIGINT NULL,
-  CONSTRAINT user_details_gender_fk1 FOREIGN KEY (gender_id) REFERENCES genders (id),
-  PRIMARY KEY(id)
-);
-
 -- users
 CREATE TABLE users (
   id BIGINT NOT NULL AUTO_INCREMENT,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
+  first_name VARCHAR(255) NULL,
+  last_name VARCHAR(255) NULL,
   register_date timestamp NOT NULL,
-  user_details_id BIGINT NULL,
-  CONSTRAINT users_user_details_fk1 FOREIGN KEY (user_details_id) REFERENCES user_details (id),
+  gender_id BIGINT NULL,
+  CONSTRAINT user_details_gender_fk1 FOREIGN KEY (gender_id) REFERENCES genders (id),
   PRIMARY KEY(id)
 );
 
@@ -56,9 +47,10 @@ CREATE TABLE accounts (
 -- accounts expenses
 CREATE TABLE accounts_expenses (
  id BIGINT NOT NULL AUTO_INCREMENT,
- amount DECIMAL NOT NULL,
+ amount DOUBLE NOT NULL,
  inserted_date TIMESTAMP NOT NULL,
  spend_date DATE NOT NULL,
+ is_deleted TINYINT NOT NULL DEFAULT 0,
  account_id BIGINT NULL,
  user_id BIGINT NULL,
  category_id BIGINT NULL,

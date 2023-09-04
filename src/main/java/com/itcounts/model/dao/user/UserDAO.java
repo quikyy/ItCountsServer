@@ -1,6 +1,7 @@
 package com.itcounts.model.dao.user;
 
 
+import com.itcounts.model.dao.GenderDAO;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import javax.persistence.Column;
@@ -41,8 +42,13 @@ public class UserDAO {
 	@Column(name = "register_date")
 	private Timestamp registerDate;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_details_id")
-	private UserDetailsDAO userDetailsDao;
+	@Column(name = "first_name")
+	private String firstName;
 
+	@Column(name = "last_name")
+	private String lastName;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "gender_id")
+	private GenderDAO genderDAO;
 }

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 public interface IGenderDAORepository extends CrudRepository<GenderDAO, BigInteger> {
 
 	@Query(value = "SELECT * FROM genders WHERE name = 'Male'", nativeQuery = true)
-	BigInteger getMaleGenderId();
+	GenderDAO getMaleGenderDao();
 
 	@Query(value = "SELECT * FROM genders WHERE name = 'Female'", nativeQuery = true)
-	BigInteger getFemaleGenderId();
+	GenderDAO getFemaleGenderDao();
 
 	@Query(value = "SELECT * FROM genders WHERE name = :name", nativeQuery = true)
 	Optional<GenderDAO> getGenderByName(@Param("name") String name);

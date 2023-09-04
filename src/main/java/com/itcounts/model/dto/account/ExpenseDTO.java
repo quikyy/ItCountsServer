@@ -18,7 +18,7 @@ public class ExpenseDTO {
 	private BigInteger id;
 	private BigInteger expenseCategoryId;
 	private BigInteger authorId;
-	private BigDecimal amount;
+	private double amount;
 	private Timestamp insertedDate;
 	private Date spendDate;
 

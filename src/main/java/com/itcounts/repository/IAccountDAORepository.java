@@ -14,4 +14,7 @@ public interface IAccountDAORepository extends JpaRepository<AccountDAO, BigInte
 	@Query(value = "SELECT * FROM accounts WHERE id = :accountId", nativeQuery = true)
 	Optional<AccountDAO> getAccountById(@Param("accountId") BigInteger accountId);
 
+	@Query(value = "SELECT * FROM accounts WHERE owner_id = :ownerId", nativeQuery = true)
+	Optional<AccountDAO> getAccountByOwnerId(@Param("ownerId") BigInteger ownerId);
+
 }
