@@ -1,4 +1,4 @@
-package com.itcounts.model.dao.account;
+package com.itcounts.model.dao.expense;
 
 import java.math.BigInteger;
 import javax.persistence.Column;

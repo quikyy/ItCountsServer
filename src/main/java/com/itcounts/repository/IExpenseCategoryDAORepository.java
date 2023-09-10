@@ -1,6 +1,6 @@
 package com.itcounts.repository;
 
-import com.itcounts.model.dao.account.ExpenseCategoryDAO;
+import com.itcounts.model.dao.expense.ExpenseCategoryDAO;
 import java.math.BigInteger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

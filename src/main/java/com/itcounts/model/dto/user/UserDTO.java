@@ -14,4 +14,6 @@ public class UserDTO {
 	private String firstName;
 	private String lastName;
 	private Timestamp registerDate;
+	private BigInteger ownerAccountId;
+	private BigInteger guestAccountId;
 }

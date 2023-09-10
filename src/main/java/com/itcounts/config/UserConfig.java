@@ -1,7 +1,7 @@
 package com.itcounts.config;
 
 import com.itcounts.model.dao.account.AccountDAO;
-import com.itcounts.model.dao.account.ExpenseDAO;
+import com.itcounts.model.dao.expense.ExpenseDAO;
 import com.itcounts.model.dao.user.UserDAO;
 import com.itcounts.repository.IAccountDAORepository;
 import com.itcounts.repository.IExpenseCategoryDAORepository;
@@ -70,7 +70,6 @@ public class UserConfig {
 
 	private void mockExpensesForUsers(UserDAO userDao, AccountDAO accountDao) {
 		ExpenseDAO expenseDao = ExpenseDAO.builder()
-				.author(userDao)
 				.accountDao(accountDao)
 				.expenseCategoryDao(expenseCategoryDaoRepository.getExpenseCategoryById(getRandomExpenseCategoryId()))
 				.amount(getRandomAmount())

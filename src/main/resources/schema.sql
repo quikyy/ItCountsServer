@@ -38,9 +38,7 @@ CREATE TABLE users (
 CREATE TABLE accounts (
  id BIGINT NOT NULL AUTO_INCREMENT,
  owner_id BIGINT NOT NULL,
- guest_id BIGINT NULL,
  CONSTRAINT accounts_users_owner_fk1 FOREIGN KEY (owner_id) REFERENCES users (id),
- CONSTRAINT account_users_guest_fk1 FOREIGN KEY (guest_id) REFERENCES users(id),
  PRIMARY KEY(id)
 );
 
@@ -52,10 +50,8 @@ CREATE TABLE accounts_expenses (
  spend_date DATE NOT NULL,
  is_deleted TINYINT NOT NULL DEFAULT 0,
  account_id BIGINT NULL,
- user_id BIGINT NULL,
  category_id BIGINT NULL,
  CONSTRAINT accounts_expenses_accounts_fk1 FOREIGN KEY (account_id) REFERENCES users (id),
- CONSTRAINT accounts_expenses_users_fk1 FOREIGN KEY (user_id) REFERENCES users (id),
  CONSTRAINT accounts_expenses_category_fk1 FOREIGN KEY (category_id) REFERENCES expense_categories (id),
  PRIMARY KEY(id)
 );

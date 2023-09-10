@@ -1,17 +1,21 @@
 package com.itcounts.controller;
 
 import com.itcounts.model.dao.user.UserDAO;
-import com.itcounts.model.dto.account.ExpenseDTO;
+import com.itcounts.model.dto.expense.ExpenseDTO;
+import com.itcounts.model.dto.expense.ExpenseDTOBucket;
 import com.itcounts.repository.IUserDAORepository;
 import com.itcounts.requestbody.ExpenseBodyDTO;
 import com.itcounts.service.implementation.ExpenseDAOService;
 import java.math.BigInteger;
 import java.security.Principal;
+import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +56,23 @@ public class ExpenseController {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(null, HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/expenses")
+	public ResponseEntity<ExpenseDTOBucket> getExpenses(Principal principal,
+			@RequestParam("accountId") BigInteger accountId,
+			@RequestParam(value = "startDate", required = false) Date startDate,
+			@RequestParam(value = "endDate", required = false) Date endDate,
+			@RequestParam(value = "categoryId", required = false) BigInteger categoryId) {
+		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
+		if (optionalUserDao.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+		}
+		ExpenseDTOBucket response = expenseDaoService.getExpenses(accountId, startDate, endDate, categoryId);
+		if (response == null) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }

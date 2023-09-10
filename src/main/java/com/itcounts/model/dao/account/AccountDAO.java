@@ -34,9 +34,4 @@ public class AccountDAO {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "owner_id")
 	private UserDAO owner;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "guest_id")
-	private UserDAO guest;
-
 }

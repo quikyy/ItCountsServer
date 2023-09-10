@@ -1,4 +1,4 @@
-package com.itcounts.model.dto.account;
+package com.itcounts.model.dto.expense;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -17,7 +17,6 @@ public class ExpenseDTO {
 
 	private BigInteger id;
 	private BigInteger expenseCategoryId;
-	private BigInteger authorId;
 	private double amount;
 	private Timestamp insertedDate;
 	private Date spendDate;

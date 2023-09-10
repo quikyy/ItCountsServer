@@ -1,7 +1,9 @@
 package com.itcounts.config;
 
-import com.itcounts.model.dao.account.ExpenseDAO;
-import com.itcounts.model.dto.account.ExpenseDTO;
+import com.itcounts.model.dao.account.AccountDAO;
+import com.itcounts.model.dao.expense.ExpenseDAO;
+import com.itcounts.model.dto.account.AccountDTO;
+import com.itcounts.model.dto.expense.ExpenseDTO;
 import javax.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -17,13 +19,22 @@ public class ModelMapperConfig {
 
 	@PostConstruct
 	public void init() {
-
+		modelMapper.addMappings(accountDaoToAccountDto);
+		modelMapper.addMappings(expenseDaoToExpenseDto);
 	}
-	PropertyMap<ExpenseDAO, ExpenseDTO> expenseDaoToDto = new PropertyMap<>() {
+
+	PropertyMap<AccountDAO, AccountDTO> accountDaoToAccountDto = new PropertyMap<>() {
 		@Override
 		protected void configure() {
 			map().setId(source.getId());
-			map().setAuthorId(source.getAuthor().getId());
+			map().setOwnerId(source.getOwner().getId());
+		}
+	};
+
+	PropertyMap<ExpenseDAO, ExpenseDTO> expenseDaoToExpenseDto = new PropertyMap<>() {
+		@Override
+		protected void configure() {
+			map().setId(source.getId());
 			map().setExpenseCategoryId(source.getExpenseCategoryDao().getId());
 			map().setAmount(source.getAmount());
 			map().setInsertedDate(source.getInsertedDate());

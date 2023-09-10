@@ -1,7 +1,7 @@
-package com.itcounts.model.dao.account;
+package com.itcounts.model.dao.expense;
 
+import com.itcounts.model.dao.account.AccountDAO;
 import com.itcounts.model.dao.user.UserDAO;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -46,10 +46,6 @@ public class ExpenseDAO {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
 	private AccountDAO accountDao;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private UserDAO author;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
