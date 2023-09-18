@@ -2,10 +2,12 @@ package com.itcounts.config;
 
 import com.itcounts.model.dao.account.AccountDAO;
 import com.itcounts.model.dao.expense.ExpenseDAO;
+import com.itcounts.model.dao.expense.ExpenseScheduledDAO;
 import com.itcounts.model.dao.user.UserDAO;
 import com.itcounts.repository.IAccountDAORepository;
 import com.itcounts.repository.IExpenseCategoryDAORepository;
 import com.itcounts.repository.IExpenseDAORepository;
+import com.itcounts.repository.IExpenseScheduledRepository;
 import com.itcounts.repository.IGenderDAORepository;
 import com.itcounts.repository.IUserDAORepository;
 import java.math.BigInteger;
@@ -34,6 +36,9 @@ public class UserConfig {
 
 	@Autowired
 	private IExpenseCategoryDAORepository expenseCategoryDaoRepository;
+
+	@Autowired
+	private IExpenseScheduledRepository expenseScheduledRepository;
 
 	@Autowired
 	private IGenderDAORepository genderDaoRepository;
@@ -66,6 +71,10 @@ public class UserConfig {
 		for (int i = 0; i < expensesAmount; i++){
 			mockExpensesForUsers(userDao, accountDao);
 		}
+		int expensesScheduledAmount = getRandomInt(2, 6);
+		for (int i = 0; i < expensesScheduledAmount; i++) {
+			mockExpenseScheduledForUsers(userDao, accountDao);
+		}
 	}
 
 	private void mockExpensesForUsers(UserDAO userDao, AccountDAO accountDao) {
@@ -75,8 +84,22 @@ public class UserConfig {
 				.amount(getRandomAmount())
 				.insertedDate(Timestamp.from(Instant.now()))
 				.spendDate(getRandomSpendDate())
+				.isScheduled(false)
 				.build();
 		expenseDaoRepository.save(expenseDao);
+	}
+
+	private void mockExpenseScheduledForUsers(UserDAO userDao, AccountDAO accountDao) {
+		ExpenseScheduledDAO expenseScheduledDAO = ExpenseScheduledDAO.builder()
+				.amount(getRandomAmount())
+				.dayOfMonth(getRandomInt(17, 19))
+				.insertedDate(Timestamp.from(Instant.now()))
+				.isActive(true)
+				.userDao(userDao)
+				.accountDao(accountDao)
+				.expenseCategoryDao(expenseCategoryDaoRepository.getExpenseCategoryById(getRandomExpenseCategoryId()))
+				.build();
+		expenseScheduledRepository.save(expenseScheduledDAO);
 	}
 
 	private BigInteger getRandomExpenseCategoryId() {
@@ -99,7 +122,7 @@ public class UserConfig {
 	private Date getRandomSpendDate() {
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.DAY_OF_MONTH, getRandomInt(1, 30));
-		c.set(Calendar.MONTH, getRandomInt(4, 6));
+		c.set(Calendar.MONTH, getRandomInt(8, 9));
 		Timestamp timestamp = new Timestamp(c.getTimeInMillis());
 		return new Date(timestamp.getTime());
 	}

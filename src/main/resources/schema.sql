@@ -51,8 +51,24 @@ CREATE TABLE accounts_expenses (
  is_deleted TINYINT NOT NULL DEFAULT 0,
  account_id BIGINT NULL,
  category_id BIGINT NULL,
+ is_scheduled TINYINT NOT NULL DEFAULT 0,
  CONSTRAINT accounts_expenses_accounts_fk1 FOREIGN KEY (account_id) REFERENCES users (id),
  CONSTRAINT accounts_expenses_category_fk1 FOREIGN KEY (category_id) REFERENCES expense_categories (id),
  PRIMARY KEY(id)
+);
+
+CREATE TABLE expense_scheduled (
+ id BIGINT NOT NULL AUTO_INCREMENT,
+ amount DOUBLE NOT NULL,
+ day_of_month INT NOT NULL,
+ inserted_date TIMESTAMP NOT NULL,
+ is_active TINYINT NOT NULL DEFAULT 1,
+ account_id BIGINT NOT NULL,
+ user_id BIGINT NOT NULL,
+ category_id BIGINT NOT NULL,
+ CONSTRAINT expense_scheduled_account_id_fk1 FOREIGN KEY (account_id) REFERENCES accounts (id),
+ CONSTRAINT expense_scheduled_user_id_fk1 FOREIGN KEY (user_id) REFERENCES users (id),
+ CONSTRAINT expense_scheduled_category_id_fk1 FOREIGN KEY (category_id) REFERENCES expense_categories (id),
+ PRIMARY KEY (id)
 );
 

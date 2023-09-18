@@ -90,36 +90,44 @@ public class ExpenseDAOService implements IExpenseDAOService {
 		if (accountDaoOptional.isEmpty()) {
 			return null;
 		}
-		AccountDAO accountDao = accountDaoOptional.get();
 		List<ExpenseDAO> expenseDaoList = new ArrayList<>();
 		List<ExpenseDTO> expenseDtoList = new ArrayList<>();
-		if (startDate != null && endDate != null && categoryId != null) {
-			expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDateCategoryId(accountId, startDate, endDate, categoryId);
-			for (ExpenseDAO expenseDao : expenseDaoList) {
-				expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
-			}
-			return ExpenseDTOBucket.builder()
-					.startDate(startDate)
-					.endDate(endDate)
-					.categoryId(categoryId)
-					.expensesAmount(expenseDtoList.size())
-					.expenses(expenseDtoList)
-					.build();
-		}
 
-		if (startDate != null && endDate != null) {
-			expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDate(accountId, startDate, endDate);
-			return new ExpenseDTOBucket();
-		} else {
+		/*
+			Default view - current month, all categories
+		 */
+		if (startDate == null && endDate == null && categoryId == null) {
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			Date calendarStartDate = new Date(c.getTimeInMillis());
 			c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date calendarEndDate = new Date(c.getTimeInMillis());
 			expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDate(accountId, calendarStartDate, calendarEndDate);
-			return new ExpenseDTOBucket();
+			for (ExpenseDAO expenseDao : expenseDaoList) {
+				expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
+			}
+			return ExpenseDTOBucket.builder()
+					.startDate(calendarStartDate)
+					.endDate(calendarEndDate)
+					.categoryId(null)
+					.expensesAmount(expenseDtoList.size())
+					.expenses(expenseDtoList)
+					.build();
 		}
+		expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDateCategoryId(accountId, startDate, endDate, categoryId);
+		logger.info("Daolist: " + expenseDaoList.size());
+		for (ExpenseDAO expenseDao : expenseDaoList) {
+			expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
+		}
+		return ExpenseDTOBucket.builder()
+				.startDate(startDate)
+				.endDate(endDate)
+				.categoryId(categoryId)
+				.expensesAmount(expenseDtoList.size())
+				.expenses(expenseDtoList)
+				.build();
 	}
+
 
 
 }
