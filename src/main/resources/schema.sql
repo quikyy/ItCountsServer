@@ -20,6 +20,7 @@ INSERT INTO expense_categories (name) VALUES ('Food');
 INSERT INTO expense_categories (name) VALUES ('House');
 INSERT INTO expense_categories (name) VALUES ('Credit');
 INSERT INTO expense_categories (name) VALUES ('Health');
+INSERT INTO expense_categories (name) VALUES ('Other');
 
 -- users
 CREATE TABLE users (
