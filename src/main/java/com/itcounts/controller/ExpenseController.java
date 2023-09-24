@@ -5,6 +5,7 @@ import com.itcounts.model.dto.expense.ExpenseDTO;
 import com.itcounts.model.dto.expense.ExpenseDTOBucket;
 import com.itcounts.repository.IUserDAORepository;
 import com.itcounts.requestbody.ExpenseBodyDTO;
+import com.itcounts.requestbody.ExpenseEditBodyDTO;
 import com.itcounts.service.implementation.ExpenseDAOService;
 import java.math.BigInteger;
 import java.security.Principal;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,32 +32,6 @@ public class ExpenseController {
 
 	@Autowired
 	private ExpenseDAOService expenseDaoService;
-
-	@PostMapping(path = "/expense")
-	public ResponseEntity<ExpenseDTO> addExpense(Principal principal, @RequestBody ExpenseBodyDTO expenseBodyDto) {
-		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
-		if (optionalUserDao.isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-		}
-		ExpenseDTO response = expenseDaoService.addExpense(optionalUserDao.get(), expenseBodyDto);
-		if (response == null) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	@DeleteMapping(path = "/expense")
-	public ResponseEntity<String> deleteExpense(Principal principal, @RequestParam("expenseId") BigInteger expenseId) {
-		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
-		if (optionalUserDao.isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-		}
-		boolean isDeleted = expenseDaoService.deleteExpense(optionalUserDao.get(), expenseId);
-		if (!isDeleted) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>(null, HttpStatus.OK);
-	}
 
 	@GetMapping(path = "/expenses")
 	public ResponseEntity<ExpenseDTOBucket> getExpenses(Principal principal,
@@ -72,6 +48,45 @@ public class ExpenseController {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping(path = "/expense")
+	public ResponseEntity<ExpenseDTO> addExpense(Principal principal, @RequestBody ExpenseBodyDTO expenseBodyDto) {
+		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
+		if (optionalUserDao.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+		}
+		ExpenseDTO response = expenseDaoService.addExpense(optionalUserDao.get(), expenseBodyDto);
+		if (response == null) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PutMapping(path = "/expense")
+	public ResponseEntity<ExpenseDTO> editExpense(Principal principal, @RequestParam("id") BigInteger expenseId, @RequestBody ExpenseEditBodyDTO expenseEditBodyDto) {
+		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
+		if (optionalUserDao.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+		}
+		ExpenseDTO response = expenseDaoService.editExpense(optionalUserDao.get(), expenseId, expenseEditBodyDto);
+		if (response == null) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@DeleteMapping(path = "/expense")
+	public ResponseEntity<String> deleteExpense(Principal principal, @RequestParam("expenseId") BigInteger expenseId) {
+		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
+		if (optionalUserDao.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+		}
+		boolean isDeleted = expenseDaoService.deleteExpense(optionalUserDao.get(), expenseId);
+		if (!isDeleted) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 }

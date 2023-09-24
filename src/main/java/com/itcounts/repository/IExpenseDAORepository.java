@@ -34,5 +34,4 @@ public interface IExpenseDAORepository extends JpaRepository<ExpenseDAO, BigInte
 			+ "CAST(spend_date as DATE) <= :endDate", nativeQuery = true)
 	List<ExpenseDAO> getExpensesByAccountIdStartEndDate(@Param("accountId") BigInteger accountId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-
 }

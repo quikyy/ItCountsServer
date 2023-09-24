@@ -1,6 +1,7 @@
 package com.itcounts.service.implementation;
 
 import com.itcounts.model.dao.account.AccountDAO;
+import com.itcounts.model.dao.expense.ExpenseCategoryDAO;
 import com.itcounts.model.dao.expense.ExpenseDAO;
 import com.itcounts.model.dao.user.UserDAO;
 import com.itcounts.model.dto.expense.ExpenseDTO;
@@ -9,6 +10,7 @@ import com.itcounts.repository.IAccountDAORepository;
 import com.itcounts.repository.IExpenseCategoryDAORepository;
 import com.itcounts.repository.IExpenseDAORepository;
 import com.itcounts.requestbody.ExpenseBodyDTO;
+import com.itcounts.requestbody.ExpenseEditBodyDTO;
 import com.itcounts.service.interfaces.IExpenseDAOService;
 import java.math.BigInteger;
 import java.sql.Date;
@@ -70,6 +72,36 @@ public class ExpenseDAOService implements IExpenseDAOService {
 		}
 		expenseDao = expenseDaoRepository.save(expenseDao);
 		return modelMapper.map(expenseDao, ExpenseDTO.class);
+	}
+
+	@Override
+	public ExpenseDTO editExpense(UserDAO userDao, BigInteger expenseId, ExpenseEditBodyDTO expenseEditBodyDTO) {
+		Optional<ExpenseDAO> expenseDaoOptional = expenseDaoRepository.getExpenseById(expenseId);
+		if (expenseDaoOptional.isEmpty()) {
+			return null;
+		}
+		ExpenseDAO expenseDao = expenseDaoOptional.get();
+		if (expenseDao.isScheduled()) {
+			return null;
+		}
+		boolean isEdited = false;
+		if (expenseDao.getAmount() != expenseEditBodyDTO.getAmount()) {
+			expenseDao.setAmount(expenseEditBodyDTO.getAmount());
+			isEdited = true;
+		}
+		if (expenseDao.getExpenseCategoryDao().getId() != expenseEditBodyDTO.getExpenseCategoryId()) {
+			Optional<ExpenseCategoryDAO> expenseCategoryDaoOptional = expensesCategoryDaoRepository.getExpenseCategoryByIdOptional(expenseEditBodyDTO.getExpenseCategoryId());
+			if (expenseCategoryDaoOptional.isPresent()) {
+				expenseDao.setExpenseCategoryDao(expenseCategoryDaoOptional.get());
+				isEdited = true;
+			}
+		}
+		if (isEdited) {
+			expenseDaoRepository.save(expenseDao);
+			return modelMapper.map(expenseDao, ExpenseDTO.class);
+		} else {
+			return null;
+		}
 	}
 
 	@Override

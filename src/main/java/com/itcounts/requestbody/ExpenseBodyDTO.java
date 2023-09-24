@@ -1,6 +1,5 @@
 package com.itcounts.requestbody;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import lombok.Getter;
