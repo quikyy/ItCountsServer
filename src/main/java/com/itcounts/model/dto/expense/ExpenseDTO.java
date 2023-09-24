@@ -21,5 +21,6 @@ public class ExpenseDTO {
 	private Timestamp insertedDate;
 	private Date spendDate;
 	private boolean isScheduled;
+	private String info;
 
 }

@@ -53,6 +53,7 @@ CREATE TABLE accounts_expenses (
  account_id BIGINT NULL,
  category_id BIGINT NULL,
  is_scheduled TINYINT NOT NULL DEFAULT 0,
+ info VARCHAR(255) NULL DEFAULT NULL,
  CONSTRAINT accounts_expenses_accounts_fk1 FOREIGN KEY (account_id) REFERENCES users (id),
  CONSTRAINT accounts_expenses_category_fk1 FOREIGN KEY (category_id) REFERENCES expense_categories (id),
  PRIMARY KEY(id)
