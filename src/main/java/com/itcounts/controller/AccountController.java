@@ -37,17 +37,4 @@ public class AccountController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping(path = "/account/create")
-	public ResponseEntity<String> createAccount(Principal principal) {
-		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
-		if (optionalUserDao.isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-		}
-		boolean isAccountCreated = accountDaoService.createNewAccount(optionalUserDao.get());
-		if (!isAccountCreated) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>(null, HttpStatus.OK);
-	}
-
 }

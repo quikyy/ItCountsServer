@@ -18,6 +18,4 @@ public class RegisterRequestDTO {
 	private String lastName;
 	private Date date;
 	private String gender;
-	private boolean createAccount;
-
 }
