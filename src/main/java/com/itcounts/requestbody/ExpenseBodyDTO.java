@@ -10,5 +10,6 @@ public class ExpenseBodyDTO {
 	private BigInteger expenseCategoryId;
 	private double amount;
 	private Date spendDate;
+	private String info;
 
 }

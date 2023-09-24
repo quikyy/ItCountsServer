@@ -103,7 +103,7 @@ public class UserConfig {
 	}
 
 	private BigInteger getRandomExpenseCategoryId() {
-		int randomInt = getRandomInt(1, 5);
+		int randomInt = getRandomInt(1, 6);
 		return new BigInteger(String.valueOf(randomInt));
 	}
 

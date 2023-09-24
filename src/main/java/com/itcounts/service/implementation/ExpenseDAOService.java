@@ -64,6 +64,7 @@ public class ExpenseDAOService implements IExpenseDAOService {
 				.amount(expenseBodyDto.getAmount())
 				.expenseCategoryDao(expensesCategoryDaoRepository.getExpenseCategoryById(expenseBodyDto.getExpenseCategoryId()))
 				.insertedDate(Timestamp.from(Instant.now()))
+				.info(expenseBodyDto.getInfo())
 				.build();
 		if (expenseBodyDto.getSpendDate() == null) {
 			expenseDao.setSpendDate(Date.valueOf(LocalDate.now()));
@@ -160,6 +161,19 @@ public class ExpenseDAOService implements IExpenseDAOService {
 				.build();
 	}
 
+	@Override
+	public List<ExpenseDTO> getExpensesBetweenDates(UserDAO userDao, Date startDate, Date endDate) {
+		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountByOwnerId(userDao.getId());
+		if (accountDaoOptional.isEmpty()) {
+			return null;
+		}
+		List<ExpenseDAO> expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDate(accountDaoOptional.get().id, startDate, endDate);
+		List<ExpenseDTO> expenseDtoList = new ArrayList<>();
+		for (ExpenseDAO expenseDao : expenseDaoList) {
+			expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
+		}
+		return expenseDtoList;
+	}
 
 
 }

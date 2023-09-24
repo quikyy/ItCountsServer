@@ -15,4 +15,5 @@ public interface IExpenseDAOService {
 	ExpenseDTO editExpense(UserDAO userDao, BigInteger expenseId, ExpenseEditBodyDTO expenseEditBodyDTO);
 	boolean deleteExpense(UserDAO userDao, BigInteger expenseId);
 	ExpenseDTOBucket getExpenses(BigInteger accountId, Date startDate, Date endDate, BigInteger categoryId);
+	List<ExpenseDTO> getExpensesBetweenDates(UserDAO userDao, Date startDate, Date endDate);
 }

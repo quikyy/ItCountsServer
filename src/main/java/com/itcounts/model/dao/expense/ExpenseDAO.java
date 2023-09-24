@@ -57,4 +57,7 @@ public class ExpenseDAO {
 	@Column(name = "is_scheduled")
 	private boolean isScheduled;
 
+	@Column(name = "info")
+	private String info;
+
 }
