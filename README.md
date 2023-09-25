@@ -31,17 +31,23 @@ List the ready features here:
 - `LOGIN: marekgeret81@onet.pl || PASSWORD: marek81`   
 - `LOGIN: spammerjoanna@gmail.com || PASSWORD: haslo12`
 
-## Endpoints
 
-### Register
 
+## Register
+
+### Description: `Register new user`
 Method: `POST`\
 URL: `/api/auth/register`\
-Body: `true`\
-Auth: `false`
+Auth: `false`\
+Body: `true`
+
+| name                                               | type                              
+| -------------------------------------------------- | -------------------------------- |
+| email                                              | string                           |
+| password                                           | string                           |
 
 Example body:
-```
+```json
 {
     "email": "email@gmail.com",
     "password": "password123",
@@ -50,22 +56,29 @@ Example body:
 }
 ```
 
-### Login
+## Login
 
-Method: `POST`\
+### Description: `Login as user`
 URL: `/api/auth/login`\
-Body: `true`\
-Auth: `false`
+Method: `POST`\
+Auth: `false`\
+Body: `true`
+
+| name                                               | type                              
+| -------------------------------------------------- | -------------------------------- |
+| email                                              | String                           |
+| password                                           | String                           |
+
 
 Example body:
-```
+```json
 {
     "email": "marekgeret81@onet.pl",
     "password": "marek81"
 }
 ```
 Example response:
-```
+```json
 {
     "type": "Bearer ",
     "token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXJla2dlcmV0ODFAb25ldC5wbCIsImlhdCI6MTY5NTU2NDM1NSwiZXhwIjoxNjk1NTY3OTU1fQ.K03o2H4_7GLKKb81fceWHrEyBcKFLQ8DICLHZFsuLovZIL76VCCtU7IdSp7RJbKUQrb768bb-_gi7UyG3OP00w",
@@ -73,9 +86,134 @@ Example response:
 }
 ```
 
+## Account
 
-## Usage
-How does one go about using it?
-Provide various use cases and code examples here.
+#### Description: `Get user account`
+URL: `/api/account`\
+Method: `GET`\
+Auth: `true`, `bearer`
 
-`qweqwsdasad`
+Example response:
+```json
+{
+    "accountId": 1,
+    "ownerId": 1
+}
+```
+
+## Expenses
+
+### Description: `Get all expenses made by user`
+URL: `/api/expenses`\
+Method: `GET`\
+Auth: `true`, `bearer`\
+Query parameters: 
+
+| name                                               | type                             | optional                        |
+| -------------------------------------------------- | -------------------------------- |-------------------------------- |
+| categoryId                                         | BigInteger                       | true                            |
+| startDate                                          | Date ('YYYY-MM-'DD')             | true                            |
+| endDate                                            | Date ('YYYY-MM-'DD')             | true                            |
+
+
+### Description: `Add new expense`
+URL: `/api/expense`\
+Method: `POST`\
+Auth: `true`, `bearer`\
+Body: `true`
+
+| name                                               | type                              
+| -------------------------------------------------- | -------------------------------- |
+| expenseCategoryId                                  | BigInteger                       |
+| amount                                             | Double                           |
+| spendDate                                          | Date ('YYYY-MM-'DD')             |
+| info                                               | String                           |
+
+Example response:
+```json
+{
+    "id": 22,
+    "expenseCategoryId": 2,
+    "amount": 39.99,
+    "insertedDate": 1695629670420,
+    "spendDate": 1701734400000,
+    "info": "Nice pumpkin candle from Ikea",
+    "scheduled": false
+}
+```
+
+### Description: `Get single expense by ID`
+URL: `/api/expense/{id}`\
+Method: `POST`\
+Auth: `true`, `bearer`\
+Path variables:
+
+| name                                               | type                              
+| -------------------------------------------------- | -------------------------------- |
+| id                                                 | BigInteger                       |
+
+```json
+{
+    "id": 1,
+    "expenseCategoryId": 3,
+    "amount": 907.42,
+    "insertedDate": 1695630730396,
+    "spendDate": 1694469600000,
+    "info": null,
+    "scheduled": false
+}
+```
+
+### Description: `Edit existing expense by ID`
+URL: `/api/expense/{id}`\
+Method: `PUT`\
+Auth: `true`, `bearer`\
+Body: `true`
+
+Example body:
+```json
+{
+    "amount": 340.99,
+    "expenseCategoryId": 4
+}
+```
+Path variables:
+
+| name                                               | type                             | optional                        |
+| -------------------------------------------------- | -------------------------------- |-------------------------------- |
+| id                                                 | BigInteger                       | false                           |
+
+
+#### Description: `Delete existing expense by ID`
+URL: `/api/expense/{id}`\
+Method: `DELETE`\
+Auth: `true`, `bearer`\
+Path variables:
+
+| name                                               | type                             | optional                        |
+| -------------------------------------------------- | -------------------------------- |-------------------------------- |
+| id                                                 | BigInteger                       | false                           |
+
+## Schedule Expenses
+
+#### Description: `The expense will be added to the user's account every month on the selected day`
+URL: `/api/expense/schedule`\
+Method: `POST`\
+Auth: `true`, `bearer`\
+Body: `true`\
+| name                                               | type                              
+| -------------------------------------------------- | -------------------------------- |
+| amount                                             | Double                           |
+| dayOfMonth                                         | Date ('YYYY-MM-'DD')             |
+| expenseCategoryId                                  | BigInteger                       |
+
+
+### Description: `Delete scheduled expense`
+URL: `/api/expense/schedule/{id}`\
+Method: `DELETE`\
+Auth: `true`, `bearer`\
+Path variables:
+
+| name                                               | type                             | optional                        |
+| -------------------------------------------------- | -------------------------------- |-------------------------------- |
+| id                                                 | BigInteger                       | false                           |
