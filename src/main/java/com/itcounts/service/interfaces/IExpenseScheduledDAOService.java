@@ -7,6 +7,6 @@ import java.math.BigInteger;
 
 public interface IExpenseScheduledDAOService {
 
-	ExpenseScheduledDTO createExpenseScheduled(UserDAO userDao, BigInteger accountId, ExpenseScheduledBodyDTO expenseScheduledBodyDto);
-	boolean deleteExpenseScheduled(BigInteger accountId, BigInteger expenseScheduledId);
+	ExpenseScheduledDTO createExpenseScheduled(UserDAO userDao, ExpenseScheduledBodyDTO expenseScheduledBodyDto);
+	boolean deleteExpenseScheduled(UserDAO userDao, BigInteger expenseScheduledId);
 }

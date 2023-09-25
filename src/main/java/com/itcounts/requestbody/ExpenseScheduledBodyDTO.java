@@ -8,6 +8,6 @@ public class ExpenseScheduledBodyDTO {
 
 	private double amount;
 	private int dayOfMonth;
-	private BigInteger categoryId;
+	private BigInteger expenseCategoryId;
 
 }

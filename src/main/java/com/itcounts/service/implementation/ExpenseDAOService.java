@@ -20,11 +20,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,10 +49,7 @@ public class ExpenseDAOService implements IExpenseDAOService {
 
 	@Override
 	public ExpenseDTO addExpense(UserDAO userDao, ExpenseBodyDTO expenseBodyDto) {
-		if (expenseBodyDto.getAccountId() == null) {
-			return null;
-		}
-		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountById(expenseBodyDto.getAccountId());
+		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountByOwnerId(userDao.getId());
 		if (accountDaoOptional.isEmpty()) {
 			return null;
 		}
@@ -59,7 +58,6 @@ public class ExpenseDAOService implements IExpenseDAOService {
 		if (!isUserLinkedWithAccount) {
 			return null;
 		}
-
 		ExpenseDAO expenseDao = ExpenseDAO.builder()
 				.amount(expenseBodyDto.getAmount())
 				.expenseCategoryDao(expensesCategoryDaoRepository.getExpenseCategoryById(expenseBodyDto.getExpenseCategoryId()))
@@ -76,12 +74,30 @@ public class ExpenseDAOService implements IExpenseDAOService {
 	}
 
 	@Override
+	public ExpenseDTO getExpense(UserDAO userDao, BigInteger expenseId) {
+		Optional<ExpenseDAO> expenseDaoOptional = expenseDaoRepository.getExpenseById(expenseId);
+		if (expenseDaoOptional.isEmpty()) {
+			return null;
+		}
+		ExpenseDAO expenseDao = expenseDaoOptional.get();
+		boolean isExpenseLinkedWithUserAccount = checkIfUserAccountLinkedWithExpense(userDao, expenseDao);
+		if (!isExpenseLinkedWithUserAccount) {
+			return null;
+		}
+		return modelMapper.map(expenseDaoOptional.get(), ExpenseDTO.class);
+	}
+
+	@Override
 	public ExpenseDTO editExpense(UserDAO userDao, BigInteger expenseId, ExpenseEditBodyDTO expenseEditBodyDTO) {
 		Optional<ExpenseDAO> expenseDaoOptional = expenseDaoRepository.getExpenseById(expenseId);
 		if (expenseDaoOptional.isEmpty()) {
 			return null;
 		}
 		ExpenseDAO expenseDao = expenseDaoOptional.get();
+		boolean isExpenseLinkedWithUserAccount = checkIfUserAccountLinkedWithExpense(userDao, expenseDao);
+		if (!isExpenseLinkedWithUserAccount) {
+			return null;
+		}
 		if (expenseDao.isScheduled()) {
 			return null;
 		}
@@ -112,17 +128,22 @@ public class ExpenseDAOService implements IExpenseDAOService {
 			return false;
 		}
 		ExpenseDAO expenseDao = expenseDaoOptional.get();
+		boolean isExpenseLinkedWithUserAccount = checkIfUserAccountLinkedWithExpense(userDao, expenseDao);
+		if (!isExpenseLinkedWithUserAccount) {
+			return false;
+		}
 		expenseDao.setDeleted(true);
 		expenseDaoRepository.save(expenseDao);
 		return true;
 	}
 
 	@Override
-	public ExpenseDTOBucket getExpenses(BigInteger accountId, Date startDate, Date endDate, BigInteger categoryId) {
-		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountById(accountId);
+	public ExpenseDTOBucket getExpenses(UserDAO userDao, Date startDate, Date endDate, BigInteger categoryId) {
+		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountByOwnerId(userDao.getId());
 		if (accountDaoOptional.isEmpty()) {
 			return null;
 		}
+		AccountDAO accountDao = accountDaoOptional.get();
 		List<ExpenseDAO> expenseDaoList = new ArrayList<>();
 		List<ExpenseDTO> expenseDtoList = new ArrayList<>();
 
@@ -135,7 +156,7 @@ public class ExpenseDAOService implements IExpenseDAOService {
 			Date calendarStartDate = new Date(c.getTimeInMillis());
 			c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 			Date calendarEndDate = new Date(c.getTimeInMillis());
-			expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDate(accountId, calendarStartDate, calendarEndDate);
+			expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDate(accountDao.getId(), calendarStartDate, calendarEndDate);
 			for (ExpenseDAO expenseDao : expenseDaoList) {
 				expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
 			}
@@ -147,8 +168,7 @@ public class ExpenseDAOService implements IExpenseDAOService {
 					.expenses(expenseDtoList)
 					.build();
 		}
-		expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDateCategoryId(accountId, startDate, endDate, categoryId);
-		logger.info("Daolist: " + expenseDaoList.size());
+		expenseDaoList = expenseDaoRepository.getExpensesByAccountIdStartEndDateCategoryId(accountDao.getId(), startDate, endDate, categoryId);
 		for (ExpenseDAO expenseDao : expenseDaoList) {
 			expenseDtoList.add(modelMapper.map(expenseDao, ExpenseDTO.class));
 		}
@@ -175,5 +195,12 @@ public class ExpenseDAOService implements IExpenseDAOService {
 		return expenseDtoList;
 	}
 
+	private boolean checkIfUserAccountLinkedWithExpense(UserDAO userDao, ExpenseDAO expenseDao) {
+		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountByOwnerId(userDao.getId());
+		if (accountDaoOptional.isEmpty()) {
+			return false;
+		}
+		return accountDaoOptional.get().getId().equals(expenseDao.getAccountDao().getId());
+	}
 
 }

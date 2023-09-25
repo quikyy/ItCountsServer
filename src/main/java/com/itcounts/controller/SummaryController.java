@@ -26,7 +26,7 @@ public class SummaryController {
 	private SummaryService summaryService;
 
 	@GetMapping(path = "/summary")
-	public ResponseEntity<?> getSummary(Principal principal,
+	public ResponseEntity<SummaryDTO> getSummary(Principal principal,
 			@RequestParam(value = "startDate", required = false) Date startDate,
 			@RequestParam(value = "endDate", required = false) Date endDate) {
 		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());

@@ -8,13 +8,14 @@ import com.itcounts.repository.IAccountDAORepository;
 import com.itcounts.repository.IExpenseCategoryDAORepository;
 import com.itcounts.repository.IExpenseDAORepository;
 import com.itcounts.repository.IExpenseScheduledRepository;
-import com.itcounts.repository.IGenderDAORepository;
 import com.itcounts.repository.IUserDAORepository;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -41,15 +42,27 @@ public class UserConfig {
 	private IExpenseScheduledRepository expenseScheduledRepository;
 
 	@Autowired
-	private IGenderDAORepository genderDaoRepository;
-
-	@Autowired
 	private PasswordEncoder encoder;
+
+	private List<String> randomQuotes = new ArrayList<>();
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void mockDatabaseApp() {
+		mockRandomQuotes();
 		mockUserAndAccount("marekgeret81@onet.pl", "marek81", "Marek", "Geret", "Male");
 		mockUserAndAccount("spammerjoanna@gmail.com", "haslo12", "Joanna", "Kowalska", "Female");
+	}
+
+	private void mockRandomQuotes() {
+		randomQuotes.add("I have to!");
+		randomQuotes.add("It was nice.");
+		randomQuotes.add("First and last time I bought this.");
+		randomQuotes.add("Gift");
+		randomQuotes.add("Too expensive");
+		randomQuotes.add("So cheap!");
+		randomQuotes.add("Not sure about this..");
+		randomQuotes.add("I like it.");
+		randomQuotes.add("Enjoy");
 	}
 
 
@@ -60,7 +73,6 @@ public class UserConfig {
 				.firstName(firstName)
 				.lastName(lastName)
 				.registerDate(getRandomRegisterTimestamp())
-				.genderDAO(genderDaoRepository.getGenderByName(gender).get())
 				.build();
 		userDao = userDaoRepository.save(userDao);
 		AccountDAO accountDao = AccountDAO.builder()
@@ -85,6 +97,7 @@ public class UserConfig {
 				.insertedDate(Timestamp.from(Instant.now()))
 				.spendDate(getRandomSpendDate())
 				.isScheduled(false)
+				.info(randomQuotes.get(getRandomInt(1, randomQuotes.size())))
 				.build();
 		expenseDaoRepository.save(expenseDao);
 	}

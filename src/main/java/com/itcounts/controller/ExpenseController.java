@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,6 @@ public class ExpenseController {
 
 	@GetMapping(path = "/expenses")
 	public ResponseEntity<ExpenseDTOBucket> getExpenses(Principal principal,
-			@RequestParam("accountId") BigInteger accountId,
 			@RequestParam(value = "startDate", required = false) Date startDate,
 			@RequestParam(value = "endDate", required = false) Date endDate,
 			@RequestParam(value = "categoryId", required = false) BigInteger categoryId) {
@@ -43,7 +43,7 @@ public class ExpenseController {
 		if (optionalUserDao.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 		}
-		ExpenseDTOBucket response = expenseDaoService.getExpenses(accountId, startDate, endDate, categoryId);
+		ExpenseDTOBucket response = expenseDaoService.getExpenses(optionalUserDao.get(), startDate, endDate, categoryId);
 		if (response == null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
@@ -63,8 +63,21 @@ public class ExpenseController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PutMapping(path = "/expense")
-	public ResponseEntity<ExpenseDTO> editExpense(Principal principal, @RequestParam("id") BigInteger expenseId, @RequestBody ExpenseEditBodyDTO expenseEditBodyDto) {
+	@GetMapping(path = "/expense/{id}")
+	public ResponseEntity<ExpenseDTO> getExpense(Principal principal, @PathVariable("id") BigInteger expenseId) {
+		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
+		if (optionalUserDao.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+		}
+		ExpenseDTO response = expenseDaoService.getExpense(optionalUserDao.get(), expenseId);
+		if (response == null) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PutMapping(path = "/expense/{id}")
+	public ResponseEntity<ExpenseDTO> editExpense(Principal principal, @PathVariable("id") BigInteger expenseId, @RequestBody ExpenseEditBodyDTO expenseEditBodyDto) {
 		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
 		if (optionalUserDao.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
@@ -76,8 +89,8 @@ public class ExpenseController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@DeleteMapping(path = "/expense")
-	public ResponseEntity<String> deleteExpense(Principal principal, @RequestParam("expenseId") BigInteger expenseId) {
+	@DeleteMapping(path = "/expense/{id}")
+	public ResponseEntity<String> deleteExpense(Principal principal, @PathVariable("id") BigInteger expenseId) {
 		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
 		if (optionalUserDao.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);

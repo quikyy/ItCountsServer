@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,25 +33,25 @@ public class ExpenseScheduledController {
 
 
 	@PostMapping(path = "/schedule")
-	public ResponseEntity<ExpenseScheduledDTO> createExpenseScheduled(Principal principal, @RequestParam("accountId") BigInteger accountId, @RequestBody ExpenseScheduledBodyDTO expenseScheduledBodyDto) {
+	public ResponseEntity<ExpenseScheduledDTO> createExpenseScheduled(Principal principal, @RequestBody ExpenseScheduledBodyDTO expenseScheduledBodyDto) {
 		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
 		if (optionalUserDao.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 		}
-		ExpenseScheduledDTO response = expenseScheduledDaoService.createExpenseScheduled(optionalUserDao.get(), accountId, expenseScheduledBodyDto);
+		ExpenseScheduledDTO response = expenseScheduledDaoService.createExpenseScheduled(optionalUserDao.get(), expenseScheduledBodyDto);
 		if (response == null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@DeleteMapping(path = "/schedule")
-	public ResponseEntity<String> deleteExpenseScheduled(Principal principal, @RequestParam("accountId") BigInteger accountId, @RequestParam("expenseScheduledId") BigInteger expenseScheduledId) {
+	@DeleteMapping(path = "/schedule/{id}")
+	public ResponseEntity<String> deleteExpenseScheduled(Principal principal, @PathVariable("id") BigInteger expenseId, @RequestParam("expenseScheduledId") BigInteger expenseScheduledId) {
 		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
 		if (optionalUserDao.isEmpty()) {
 			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 		}
-		boolean isDeleted = expenseScheduledDaoService.deleteExpenseScheduled(accountId, expenseScheduledId);
+		boolean isDeleted = expenseScheduledDaoService.deleteExpenseScheduled(optionalUserDao.get(), expenseScheduledId);
 		if (!isDeleted) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
