@@ -8,7 +8,6 @@ An application that allows users to track their expenses over the months.
 - H2 Database
 
 ## Features
-List the ready features here:
 - Register, login (JWT)
 - Add expense
 - Delete expense
