@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,19 +34,6 @@ public class AccountController {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	@PostMapping(path = "/account/create")
-	public ResponseEntity<String> createAccount(Principal principal) {
-		Optional<UserDAO> optionalUserDao = userDaoRepository.findUserByEmail(principal.getName());
-		if (optionalUserDao.isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-		}
-		boolean isAccountCreated = accountDaoService.createNewAccount(optionalUserDao.get());
-		if (!isAccountCreated) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-		}
-		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 }

@@ -46,9 +46,7 @@ public class AuthService {
 				.lastName(registerRequestDto.getLastName())
 				.build();
 		userDao = userDaoRepository.save(userDao);
-		if (registerRequestDto.isCreateAccount()) {
-			accountDaoService.createNewAccount(userDao);
-		}
+		accountDaoService.createNewAccount(userDao);
 		return new RegisterResponseDTO(true, "User registered.");
 	}
 

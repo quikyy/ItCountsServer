@@ -29,7 +29,7 @@ public class ModelMapperConfig {
 	PropertyMap<AccountDAO, AccountDTO> accountDaoToAccountDto = new PropertyMap<>() {
 		@Override
 		protected void configure() {
-			map().setId(source.getId());
+			map().setAccountId(source.getId());
 			map().setOwnerId(source.getOwner().getId());
 		}
 	};

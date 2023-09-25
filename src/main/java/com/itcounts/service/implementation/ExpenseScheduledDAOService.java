@@ -34,8 +34,8 @@ public class ExpenseScheduledDAOService implements IExpenseScheduledDAOService {
 	private ModelMapper modelMapper;
 
 	@Override
-	public ExpenseScheduledDTO createExpenseScheduled(UserDAO userDao, BigInteger accountId, ExpenseScheduledBodyDTO expenseScheduledBodyDto) {
-		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountById(accountId);
+	public ExpenseScheduledDTO createExpenseScheduled(UserDAO userDao, ExpenseScheduledBodyDTO expenseScheduledBodyDto) {
+		Optional<AccountDAO> accountDaoOptional = accountDaoRepository.getAccountByOwnerId(userDao.getId());
 		if (accountDaoOptional.isEmpty()) {
 			return null;
 		}
@@ -46,14 +46,14 @@ public class ExpenseScheduledDAOService implements IExpenseScheduledDAOService {
 				.insertedDate(Timestamp.from(Instant.now()))
 				.accountDao(accountDao)
 				.userDao(userDao)
-				.expenseCategoryDao(expenseCategoryDaoRepository.getExpenseCategoryById(expenseScheduledBodyDto.getCategoryId()))
+				.expenseCategoryDao(expenseCategoryDaoRepository.getExpenseCategoryById(expenseScheduledBodyDto.getExpenseCategoryId()))
 				.build();
 		expenseScheduledRepository.save(expenseScheduledDao);
 		return modelMapper.map(expenseScheduledDao, ExpenseScheduledDTO.class);
 	}
 
 	@Override
-	public boolean deleteExpenseScheduled(BigInteger accountId, BigInteger expenseScheduledId) {
+	public boolean deleteExpenseScheduled(UserDAO userDao, BigInteger expenseScheduledId) {
 		Optional<ExpenseScheduledDAO> optionalExpenseScheduledDao = expenseScheduledRepository.getExpenseScheduledById(expenseScheduledId);
 		if (optionalExpenseScheduledDao.isEmpty()) {
 			return false;

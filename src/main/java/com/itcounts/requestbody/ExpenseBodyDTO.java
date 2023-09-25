@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class ExpenseBodyDTO {
-	private BigInteger accountId;
 	private BigInteger expenseCategoryId;
 	private double amount;
 	private Date spendDate;

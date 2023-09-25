@@ -12,8 +12,9 @@ import java.util.List;
 public interface IExpenseDAOService {
 
 	ExpenseDTO addExpense(UserDAO userDao, ExpenseBodyDTO expenseBodyDto);
+	ExpenseDTO getExpense(UserDAO userDao, BigInteger expenseId);
 	ExpenseDTO editExpense(UserDAO userDao, BigInteger expenseId, ExpenseEditBodyDTO expenseEditBodyDTO);
 	boolean deleteExpense(UserDAO userDao, BigInteger expenseId);
-	ExpenseDTOBucket getExpenses(BigInteger accountId, Date startDate, Date endDate, BigInteger categoryId);
+	ExpenseDTOBucket getExpenses(UserDAO userDao, Date startDate, Date endDate, BigInteger categoryId);
 	List<ExpenseDTO> getExpensesBetweenDates(UserDAO userDao, Date startDate, Date endDate);
 }
